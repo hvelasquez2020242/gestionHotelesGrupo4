@@ -53,7 +53,23 @@ function Login(req, res) {
         }
     })
 }
+function Registro(req, res){
+    var parametros = req.body;
+    var modeloUsuario = new Usuario()
+    
+    modeloUsuario.nombre = parametros.nombre;
+    modeloUsuario.email = parametros.email; 
+    bcrypt.hash(parametros.password, null, null, (err, passwordEncryptada) => {
+        modeloUsuario.password = passwordEncryptada
+        modeloUsuario.save((err, usuarioGuardado) => {
+            if (err) console.log({ mensaje: 'error en la peticion ' })
+            if (!usuarioGuardado) console.log({ mensaje: 'error al crear usuario por defecto ' })
+            return res.status(200).send({usuario: usuarioGuardado})
+        })
+    })
+}
 module.exports = {
     UsuarioDefault,
-    Login
+    Login, 
+    Registro
 }
