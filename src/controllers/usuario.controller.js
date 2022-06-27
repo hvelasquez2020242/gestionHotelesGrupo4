@@ -1,7 +1,7 @@
 const Usuario = require('../models/usuario.model');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('../services/jwt');
-
+const Hotel = require('../models/hotel.model')
 
 
 function UsuarioDefault(req, res) {
@@ -49,7 +49,25 @@ function Login(req, res) {
             })
 
         } else {
-            return res.status(500).send({ mensaje: 'El usuario nose ha podido identificar' })
+            Hotel.findOne({administrador: parametros.nombre},(err, hotelEncontrado)=>{
+                if(err) return res.status(500).send({mensaje: 'Error en la peticion'})
+                if(hotelEncontrado){
+                    bcrypt.compare(parametros.password, hotelEncontrado.password, (err, verificacion)=>{
+                        if(verificacion){
+                            if(parametros.obtenerToken == 'true'){
+                                return res.status(200).send({token: jwt.crearToken(hotelEncontrado)})
+                            }else{
+                                hotelEncontrado.password = undefined
+                                return res.status(200).send({usuario: hotelEncontrado})
+                            }
+                        } else{
+                            return res.status(500).send({mensaje: 'La contraseña no coincide'})
+                        }
+                    })
+                }else{ 
+                    return res.status(500).send({mensaje: 'No se encontro el usuario'})
+                }
+            })
         }
     })
 }
