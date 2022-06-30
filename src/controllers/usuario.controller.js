@@ -77,6 +77,7 @@ function Registro(req, res){
     
     modeloUsuario.nombre = parametros.nombre;
     modeloUsuario.email = parametros.email; 
+    modeloUsuario.rol = 'usuario'; 
     bcrypt.hash(parametros.password, null, null, (err, passwordEncryptada) => {
         modeloUsuario.password = passwordEncryptada
         modeloUsuario.save((err, usuarioGuardado) => {

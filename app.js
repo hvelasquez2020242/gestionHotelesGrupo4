@@ -6,13 +6,14 @@ const UsuarioRutas = require('./src/routes/usuario.routes');
 const HotelRutas = require('./src/routes/hotel.routes');
 const HabitacionRutas = require('./src/routes/habitacion.routes');
 const EventoRutas = require('./src/routes/evento.routes');
+const HospedadosRutas = require('./src/routes/hospedados.routes')
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(cors());
 
-app.use('/api', UsuarioRutas, HotelRutas, HabitacionRutas, EventoRutas);
+app.use('/api', UsuarioRutas, HotelRutas, HabitacionRutas, EventoRutas, HospedadosRutas);
 
 
 module.exports = app;
