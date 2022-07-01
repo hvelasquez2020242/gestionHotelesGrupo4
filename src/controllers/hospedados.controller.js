@@ -50,7 +50,24 @@ function obtenerhospedajes(req, res) {
 
 
 }
+function agregarServicios(req, res){ 
+    const idHospedado = req.params.idHospedado;
+    const parametro = req.body; 
+    if(req.user.rol == 'adminHotel'){
+        Hospedados.findByIdAndUpdate(idHospedado, {$push: {servicios:{nombre: parametros.nombre, precio: parametros.precio}}}, {new: true}, (err, servicioAgregado)=>{
+            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+            if(!servicioAgregado) return res.status(404).send({mensaje: 'Hubo un error al agregar el servicio'})
+            return res.status(200).send({servicio: servicioAgregado}
+                
+            )
+        })
+    }else{
+        return res.status(500).send({mensaje: 'Solo el administrador puede agregar servicios'})
+    }
+
+}
 module.exports = {
     agregarHospedados,
     obtenerhospedajes
 }
+
