@@ -135,6 +135,15 @@ function obtenerUsuarios(req, res) {
     }
     
 }
+function obtenerUsuariosId(req, res){
+    const idUser = req.user.sub;
+
+    Usuario.findOne({_id: idUser}, (err, usuarioEncontrado)=>{
+        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+        if(!usuarioEncontrado) return res.status(404).send({mensaje: 'No se encontro el usuario'})
+        return res.status(200).send({usuario: usuarioEncontrado})
+    })
+}
 
 module.exports = {
     UsuarioDefault,
@@ -142,5 +151,6 @@ module.exports = {
     Registro,
     editarUsuario,
     eliminarUsuario,
-    obtenerUsuarios
+    obtenerUsuarios,
+    obtenerUsuariosId
 }
