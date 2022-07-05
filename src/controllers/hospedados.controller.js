@@ -2,33 +2,40 @@ const jwt = require('../services/jwt')
 const bcrypt = require('bcrypt-nodejs');
 const Hospedados = require('../models/hospedados.model')
 const Habitacion = require('../models/habitaciones.model')
-const Hotel = require('../models/hotel.model')
+const Hotel = require('../models/hotel.model');
+const Reservacion = require('../models/reservacion.model');
 
 function agregarHospedados(req, res) {
-    const parametros = req.body;
     const idUsuario = req.user.sub;
-    const idHabitacion = req.params.idHabitacion;
+    const idReservacion = req.params.idReservacion;
     const modelHospedados = new Hospedados();
 
     if (idUsuario == null) {
         return res.status(500).send({ mensaje: 'necesita estar registrado para poder ser hospedado' })
     } else {
-        if (parametros.cantidadDeDias) {
-            Habitacion.findOne({ _id: idHabitacion }, (err, habitacionEncontrada) => {
-                modelHospedados.idUsuario = idUsuario;
-                modelHospedados.tipoDeHabitacion = habitacionEncontrada.tipo;
-                modelHospedados.cantidadDeDias = parametros.cantidadDeDias;
-                modelHospedados.total = parametros.cantidadDeDias * habitacionEncontrada.precio;
-                modelHospedados.idHotel = habitacionEncontrada.idHotel;
-                modelHospedados.save((err, hospedadoGuardado) => {
-                    if (err) return res.status(505).send({ mensaje: 'Hubo un error en la peticion' })
-                    if (!hospedadoGuardado) return res.status(404).send({ mensaje: 'Hubo un error al agregar a los hospedados' })
-                    return res.status(200).send({ hospedado: hospedadoGuardado })
+        Reservacion.findOne({ _id: idReservacion }, (err, reservacionEncontrada) => {
+            console.log(reservacionEncontrada.idHabitacion);
+            if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
+            if (!reservacionEncontrada) return res.status(404).send({ mensaje: 'Hubo un error al obtener la reservacion' })
+            Habitacion.findOne({ _id: reservacionEncontrada.idHabitacion }, (err, habitacionEncontrada) => {
+                if (err) return res.status(404).send({ mensaje: 'Hubo un error en la peticion' })
+                if (!habitacionEncontrada) return res.status(404).send({ mensaje: 'Hubo un error al obtener la habitacion' })
+
+                Reservacion.findByIdAndDelete({ _id: idReservacion }, (err, reservacionEliminada) => {
+                    modelHospedados.idUsuario = idUsuario;
+                    modelHospedados.tipoDeHabitacion = habitacionEncontrada.tipo;
+                    modelHospedados.cantidadDeDias = reservacionEncontrada.cantidadDias;
+                    modelHospedados.total = reservacionEncontrada.cantidadDias * habitacionEncontrada.precio;
+                    modelHospedados.idHotel = habitacionEncontrada.idHotel;
+                    modelHospedados.save((err, hospedadoGuardado) => {
+                        if (err) return res.status(505).send({ mensaje: 'Hubo un error en la peticion' })
+                        if (!hospedadoGuardado) return res.status(404).send({ mensaje: 'Hubo un error al agregar a los hospedados' })
+                        return res.status(200).send({ hospedado: hospedadoGuardado })
+                    })
                 })
+
             })
-        } else {
-            return res.status(500).send({ mensaje: 'Necesita la cantidad de dias' })
-        }
+        })
 
     }
 }
@@ -44,25 +51,25 @@ function obtenerhospedajes(req, res) {
                 return res.status(200).send({ hospedados: hospedadoEncontrado })
             })
         })
-    }else{ 
-        return res.status(500).send({mensaje: 'Solo los administradores de los hoteles pueden ver a los hospedados'})
+    } else {
+        return res.status(500).send({ mensaje: 'Solo los administradores de los hoteles pueden ver a los hospedados' })
     }
 
 
 }
-function agregarServicios(req, res){ 
+function agregarServicios(req, res) {
     const idHospedado = req.params.idHospedado;
-    const parametro = req.body; 
-    if(req.user.rol == 'adminHotel'){
-        Hospedados.findByIdAndUpdate(idHospedado, {$push: {servicios:{nombre: parametros.nombre, precio: parametros.precio}}}, {new: true}, (err, servicioAgregado)=>{
-            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
-            if(!servicioAgregado) return res.status(404).send({mensaje: 'Hubo un error al agregar el servicio'})
-            return res.status(200).send({servicio: servicioAgregado}
-                
+    const parametro = req.body;
+    if (req.user.rol == 'adminHotel') {
+        Hospedados.findByIdAndUpdate(idHospedado, { $push: { servicios: { nombre: parametros.nombre, precio: parametros.precio } } }, { new: true }, (err, servicioAgregado) => {
+            if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
+            if (!servicioAgregado) return res.status(404).send({ mensaje: 'Hubo un error al agregar el servicio' })
+            return res.status(200).send({ servicio: servicioAgregado }
+
             )
         })
-    }else{
-        return res.status(500).send({mensaje: 'Solo el administrador puede agregar servicios'})
+    } else {
+        return res.status(500).send({ mensaje: 'Solo el administrador puede agregar servicios' })
     }
 
 }

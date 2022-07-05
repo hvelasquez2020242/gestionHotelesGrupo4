@@ -15,7 +15,7 @@ function agregarReservacion(req, res) {
             modelReservacion.idUsuario = idUsuario;
             modelReservacion.tipoDehabitacion = habitacionEncontrada.tipo;
             modelReservacion.cantidadDias = idCantidadDias
-            modelReservacion.idHabitacion = idHabitacion
+            modelReservacion.idHabitacion = habitacionEncontrada._id
             modelReservacion.total = idCantidadDias * habitacionEncontrada.precio;
             modelReservacion.idHotel = habitacionEncontrada.idHotel;
 
