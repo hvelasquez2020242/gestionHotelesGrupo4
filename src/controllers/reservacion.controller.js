@@ -10,7 +10,7 @@ function agregarReservacion(req, res) {
     const modelReservacion = new Reservacion();
 
     if (idUsuario !== null) {
-        Habitacion.findOne({ _id: idHabitacion }, (err, habitacionEncontrada) => {
+        Habitacion.findOne({ idHotel: idHabitacion }, (err, habitacionEncontrada) => {
             if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
             modelReservacion.idUsuario = idUsuario;
             modelReservacion.tipoDehabitacion = habitacionEncontrada.tipo;
