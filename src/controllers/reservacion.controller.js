@@ -1,18 +1,21 @@
 const Reservacion = require('../models/reservacion.model');
 const Habitacion = require('../models/habitaciones.model')
+const res = require('express/lib/response');
+
 
 function agregarReservacion(req, res) {
-    const parametros = req.body;
     const idUsuario = req.user.sub;
     const idHabitacion = req.params.idHabitacion;
+    const idCantidadDias = req.params.idCantidadDias;
     const modelReservacion = new Reservacion();
 
-    if (idUsuario != null) {
+    if (idUsuario !== null) {
         Habitacion.findOne({ _id: idHabitacion }, (err, habitacionEncontrada) => {
+            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
             modelReservacion.idUsuario = idUsuario;
             modelReservacion.tipoDehabitacion = habitacionEncontrada.tipo;
-            modelReservacion.cantidadDias = parametros.cantidadDias;
-            modelReservacion.total = parametros.cantidadDias * habitacionEncontrada.precio;
+            modelReservacion.cantidadDias = idCantidadDias
+            modelReservacion.total = idCantidadDias * habitacionEncontrada.precio;
             modelReservacion.idHotel = habitacionEncontrada.idHotel;
 
             modelReservacion.save((err, reservacionGuardada) => {
