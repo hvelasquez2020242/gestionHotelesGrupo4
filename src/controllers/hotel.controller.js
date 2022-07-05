@@ -14,7 +14,7 @@ function agregarHotel(req, res) {
         modelHotel.descripcion = parametros.descripcion;
         modelHotel.administrador = parametros.administrador;
         modelHotel.password = parametros.password;
-        modelHotel.rol = parametros.rol
+        modelHotel.rol = "adminHotel";
         modelHotel.idioma = parametros.idioma;
         modelHotel.telefono = parametros.telefono; 
         modelHotel.puesto = parametros.puesto;
