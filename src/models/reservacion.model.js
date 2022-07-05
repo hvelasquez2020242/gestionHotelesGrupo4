@@ -8,6 +8,7 @@ const ReservacionSchema = Schema({
         tipoDeHabitacion: String,
         cantidadDias: Number, 
         total: String,
+        idHabitacion: {type: Schema.Types.ObjectId, ref: 'Habitaciones'},
         idHotel: {type : Schema.Types.ObjectId, ref: 'Hoteles'}
     })
 

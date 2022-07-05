@@ -4,7 +4,7 @@ const md_autenticacion = require('../middlewares/autenticacion');
 
 const api = express.Router();
 
-api.post('/agregarHospedaje/:idHabitacion', md_autenticacion.Auth, hospedadosController.agregarHospedados)
+api.post('/agregarHospedaje/:idReservacion', md_autenticacion.Auth, hospedadosController.agregarHospedados)
 api.get('/obtenerHospedados', md_autenticacion.Auth, hospedadosController.obtenerhospedajes)
 
 module.exports = api;
