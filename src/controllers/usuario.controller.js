@@ -136,7 +136,7 @@ function obtenerUsuarios(req, res) {
     
 }
 function obtenerUsuariosId(req, res){
-    const idUser = req.user.sub;
+    const idUser = req.params.idUsuario;
 
     Usuario.findOne({_id: idUser}, (err, usuarioEncontrado)=>{
         if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})

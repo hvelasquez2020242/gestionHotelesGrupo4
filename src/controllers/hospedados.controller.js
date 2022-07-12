@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt-nodejs');
 const Hospedados = require('../models/hospedados.model')
 const Habitacion = require('../models/habitaciones.model')
 const Hotel = require('../models/hotel.model');
+const Usuario = require('../models/usuario.model');
 const Reservacion = require('../models/reservacion.model');
 
 function agregarHospedados(req, res) {
@@ -45,7 +46,7 @@ function obtenerhospedajes(req, res) {
     if (req.user.rol == 'adminHotel') {
 
         Hotel.findOne({ _id: idAdmin }, (err, hotelEncontrado) => {
-            Hospedados.findOne({ idHotel: hotelEncontrado._id }, (err, hospedadoEncontrado) => {
+            Hospedados.find({ idHotel: hotelEncontrado._id }, (err, hospedadoEncontrado) => {
                 if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
                 if (!hospedadoEncontrado) return res.status(500).send({ mensaje: 'Hubo al obtener a los hospedados' })
                 return res.status(200).send({ hospedados: hospedadoEncontrado })
@@ -59,7 +60,7 @@ function obtenerhospedajes(req, res) {
 }
 function agregarServicios(req, res) {
     const idHospedado = req.params.idHospedado;
-    const parametro = req.body;
+    const parametros = req.body;
     if (req.user.rol == 'adminHotel') {
         Hospedados.findByIdAndUpdate(idHospedado, { $push: { servicios: { nombre: parametros.nombre, precio: parametros.precio } } }, { new: true }, (err, servicioAgregado) => {
             if (err) return res.status(500).send({ mensaje: 'Hubo un error en la peticion' })
@@ -73,8 +74,32 @@ function agregarServicios(req, res) {
     }
 
 }
+function obtenerServicios(req, res){
+    const idHospedado = req.params.idHospedado; 
+    Hospedados.findOne({_id: idHospedado}, (err, servicioEncontrados) => {
+        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+        if(!servicioEncontrados) return res.status(404).send({ mensaje: 'Hubo un error al buscar el servicio' })
+        return res.status(200).send({servicio: servicioEncontrados.servicios})
+    })
+}
+function buscarUsuarioNombre(req, res){
+    const nombre = req.params.nombre; 
+
+    Usuario.findOne({ nombre:  { $regex: nombre, $options: "i" }}, (err, usuarioEncontrado)=>{
+        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+        if(!usuarioEncontrado) return res.status(404).send({mensaje: 'Hubo un error al buscar el usuario'})
+        
+        Hospedados.find({idUsuario: usuarioEncontrado._id}, (err, hospedajeEncontrado)=>{
+            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+            return res.status(200).send({hospedado: hospedajeEncontrado, usuario: usuarioEncontrado})
+        })
+    })
+}
 module.exports = {
     agregarHospedados,
-    obtenerhospedajes
+    buscarUsuarioNombre,
+    obtenerhospedajes,
+    obtenerServicios,
+    agregarServicios
 }
 
