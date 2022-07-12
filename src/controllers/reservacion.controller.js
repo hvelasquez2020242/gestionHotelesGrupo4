@@ -1,7 +1,9 @@
 const Reservacion = require('../models/reservacion.model');
 const Habitacion = require('../models/habitaciones.model')
 const res = require('express/lib/response');
-
+const Factura = require('../models/factura.model');
+const Hospedaje = require('../models/hospedados.model')
+const Usuario = require('../models/usuario.model');
 
 function agregarReservacion(req, res) {
     const idUsuario = req.user.sub;
@@ -50,8 +52,37 @@ function obtenerReservacionId(req, res){
         return res.status(200).send({reservacion: reservacionObtenida})
     })
 }
+function hacerFactura(req, res){
+    const idHospedaje = req.params.idHospedaje;
+    const modeloFactura = new Factura()
+    Hospedaje.findOne({_id: idHospedaje}, (err, hospedajeEncontrado)=>{
+        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+        if(!hospedajeEncontrado) return res.status(404).send({mensaje: 'Hubo un error al obtner el hospedaje'})
+        Usuario.findOne({_id: hospedajeEncontrado.idUsuario}, (err, usuarioEncontrado)=>{
+            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+            if(!usuarioEncontrado) return res.status(404).send({mensaje: 'Hubo un error al obtener al usuario'})
+            modeloFactura.nombre = usuarioEncontrado.nombre; 
+            modeloFactura.idUser = usuarioEncontrado._id;
+            modeloFactura.tipoDehabitacion = hospedajeEncontrado.tipoDeHabitacion;
+            modeloFactura.total = hospedajeEncontrado.total;
+
+            modeloFactura.save((err, facturaAgregada)=>{
+                if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+                if(!facturaAgregada) return res.status(404).send({mensaje: 'Hubo un error al agregar la factura'})
+                Hospedaje.findByIdAndDelete(idHospedaje,(err, hospedajeEliminado)=>{
+                    if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+                    if(!hospedajeEliminado) return res.status(500).send({mensaje: 'Hubo un error al eliminar el hospedaje'})
+                    return res.status(200).send({factura: facturaAgregada});
+                })
+            })
+        })
+    })
+    
+}
+
 module.exports = {
     agregarReservacion,
     obtenerReservacionId,
-    obtenerReservaciones
+    obtenerReservaciones,
+    hacerFactura
 }
