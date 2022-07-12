@@ -8,4 +8,5 @@ api.post('/agregarReservacion/:idHabitacion/:idCantidadDias', md_autenticacion.A
 api.get('/obtenerReservacion', md_autenticacion.Auth, reservacionController.obtenerReservaciones)
 api.post('/hacerFactura/:idHospedaje', md_autenticacion.Auth, reservacionController.hacerFactura)
 api.get('/obtenerReservacionId', md_autenticacion.Auth, reservacionController.obtenerReservacionId)
+api.get('/obtenerFacturas', md_autenticacion.Auth, reservacionController.obtenerFacturas)
 module.exports = api;

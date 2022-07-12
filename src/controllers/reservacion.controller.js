@@ -79,10 +79,24 @@ function hacerFactura(req, res){
     })
     
 }
+function obtenerFacturas(req, res){
+    const rol = req.user.rol;
 
+    if(rol === 'SuperAdmin'){
+        Factura.find({}, (err, facturasEncontradas)=>{
+            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+            if(!facturasEncontradas) return res.status(404).send({mensaje: 'Hubo un error al obtener las facturas'})
+            return res.status(200).send({facturas: facturasEncontradas})
+        })
+    }else{
+        return res.status(500).send({mensaje: 'Solo el administrador puede ver esto'})
+    }
+    
+}
 module.exports = {
     agregarReservacion,
     obtenerReservacionId,
     obtenerReservaciones,
-    hacerFactura
+    hacerFactura,
+    obtenerFacturas
 }
