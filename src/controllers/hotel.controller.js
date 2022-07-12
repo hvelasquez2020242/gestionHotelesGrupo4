@@ -49,8 +49,26 @@ function obtenerHotelesId(req, res) {
         return res.status(200).send({ hotel: hotelEncontrado })
     })
 }
+function editarHotel(req, res) {
+    var parametros = req.body;
+
+    if(req.user.rol == 'SuperAdmin'){
+        Hotel.findByIdAndUpdate(req.hotel.sub, parametros, { new: true },
+            (err, hotelActualizado) => {
+                if (err) return res.status(500)
+                    .send({ mensaje: 'Error en la peticion' });
+                if (!hotelActualizado) return res.status(500)
+                    .send({ mensaje: 'Error al editar el Hotel' });
+    
+                return res.status(200).send({ hotel: hotelActualizado })
+            })
+    }else{
+        return res.status(500).send({ mensaje: "Tienes que ser SuperAdmin para poder editar."})
+    }
+}
 module.exports = {
     agregarHotel,
     obtenerHoteles,
-    obtenerHotelesId
+    obtenerHotelesId,
+    editarHotel
 }

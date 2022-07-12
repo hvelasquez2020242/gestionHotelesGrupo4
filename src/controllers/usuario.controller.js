@@ -144,6 +144,21 @@ function obtenerUsuariosId(req, res){
         return res.status(200).send({usuario: usuarioEncontrado})
     })
 }
+function busquerdaUsuarioRol(req, res) {
+
+    if(req.user.rol == 'SuperAdmin'){
+        Usuario.find({ rol: "usuario"}, (err, usuariosEncontrados) => {
+            if(err) return res.status(500).send({ mensaje: 'Error en  la peticion'});
+            if(!usuariosEncontrados) return res.status(500)
+                .send({ mensaje: 'Error al obtener los usuarios'})
+    
+            return res.status(200).send({ usuarios: usuariosEncontrados })
+        })
+    }else{
+        return res.status(500).send({ mensaje: "Tiene que ser SuperAdmin para buscar un usuario"})
+    }
+}
+
 
 module.exports = {
     UsuarioDefault,
@@ -152,5 +167,6 @@ module.exports = {
     editarUsuario,
     eliminarUsuario,
     obtenerUsuarios,
-    obtenerUsuariosId
+    obtenerUsuariosId,
+    busquerdaUsuarioRol
 }

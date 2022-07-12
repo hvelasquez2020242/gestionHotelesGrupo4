@@ -10,5 +10,6 @@ api.put('/editarUsuario/:idUsuario', md_autenticacion.Auth,  usuarioControlador.
 api.delete('/eliminarUsuario/:idUsuario', md_autenticacion.Auth, usuarioControlador.eliminarUsuario)
 api.get('/obtenerUsuarios', md_autenticacion.Auth, usuarioControlador.obtenerUsuarios)
 api.get('/obtenerUsuariosId', md_autenticacion.Auth, usuarioControlador.obtenerUsuariosId)
+api.get('/obtenerUsuarioRol' , md_autenticacion.Auth, usuarioControlador.busquerdaUsuarioRol)
 
 module.exports = api;
