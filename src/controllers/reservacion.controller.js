@@ -94,7 +94,7 @@ function obtenerFacturas(req, res){
     
 }
 function eliminarReservacion(req, res){
-    const id = req.user.sub;  
+    const id = req.params.idReservacion;  
     Reservacion.findByIdAndDelete({ _id: id}, (err, reservacionEliminada) => {
         if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'});
         if(!reservacionEliminada) return res.status(500).send({mensaje: 'Hubo un error al eliminar la reservacion'}); 
