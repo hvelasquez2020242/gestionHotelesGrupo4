@@ -9,4 +9,7 @@ api.get('/obtenerReservacion', md_autenticacion.Auth, reservacionController.obte
 api.post('/hacerFactura/:idHospedaje', md_autenticacion.Auth, reservacionController.hacerFactura)
 api.get('/obtenerReservacionId', md_autenticacion.Auth, reservacionController.obtenerReservacionId)
 api.get('/obtenerFacturas', md_autenticacion.Auth, reservacionController.obtenerFacturas)
+api.delete('/eliminarReservacion', md_autenticacion.Auth, reservacionController.eliminarReservacion)
+api.get('/obtenerFacturasId', md_autenticacion.Auth, reservacionController.obtenerFacturasId)
+
 module.exports = api;

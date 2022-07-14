@@ -93,10 +93,36 @@ function obtenerFacturas(req, res){
     }
     
 }
+function eliminarReservacion(req, res){
+    const id = req.user.sub;  
+    Reservacion.findByIdAndDelete({ _id: id}, (err, reservacionEliminada) => {
+        if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'});
+        if(!reservacionEliminada) return res.status(500).send({mensaje: 'Hubo un error al eliminar la reservacion'}); 
+
+        return res.status(200).send({reservacion: reservacionEliminada})
+    })
+}
+function obtenerFacturasId(req, res){
+    const rol = req.user.rol;
+    const idUserA = req.user.sub;
+
+    if(rol === 'SuperAdmin'){
+        Factura.find({idUser: idUserA}, (err, facturasEncontradas)=>{
+            if(err) return res.status(500).send({mensaje: 'Hubo un error en la peticion'})
+            if(!facturasEncontradas) return res.status(404).send({mensaje: 'Hubo un error al obtener las facturas'})
+            return res.status(200).send({facturas: facturasEncontradas})
+        })
+    }else{
+        return res.status(500).send({mensaje: 'Solo el administrador puede ver esto'})
+    }
+    
+}
 module.exports = {
     agregarReservacion,
     obtenerReservacionId,
     obtenerReservaciones,
     hacerFactura,
-    obtenerFacturas
+    obtenerFacturas,
+    eliminarReservacion,
+    obtenerFacturasId
 }
